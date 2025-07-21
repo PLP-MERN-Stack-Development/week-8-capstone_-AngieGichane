@@ -1,24 +1,22 @@
 const express = require('express');
-const Recipe = require('../models/Recipe');
+const {
+  getRecipes,
+  getRecipeById,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe
+} = require('../controllers/recipes');
+const authMiddleware = require('../middleware/auth');
+
 const router = express.Router();
 
-// Get all recipes with search/filter
-router.get('/', async (req, res) => {
-  try {
-    const { search, cuisine, difficulty } = req.query;
-    const query = {};
-    
-    if (search) query.title = { $regex: search, $options: 'i' };
-    if (cuisine) query.cuisine = cuisine;
-    if (difficulty) query.difficulty = difficulty;
-    
-    const recipes = await Recipe.find(query).populate('createdBy', 'username');
-    res.json(recipes);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// Public routes
+router.get('/', getRecipes);
+router.get('/:id', getRecipeById);
 
-// Other CRUD routes (POST, GET /:id, PATCH, DELETE) would go here
+// Protected routes (require authentication)
+router.post('/', authMiddleware, createRecipe);
+router.put('/:id', authMiddleware, updateRecipe);
+router.delete('/:id', authMiddleware, deleteRecipe);
 
 module.exports = router;
