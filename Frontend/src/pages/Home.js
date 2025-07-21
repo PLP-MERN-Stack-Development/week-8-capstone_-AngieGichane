@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import RecipeCard from '../components/RecipeCard';
+import RecipeCard from '../../components/RecipeCard';
 import axios from 'axios';
 
 export default function Home() {

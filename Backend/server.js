@@ -8,7 +8,9 @@ const userRoutes = require('./routes/users');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL
+}));
 app.use(express.json());
 
 // Routes
@@ -16,10 +18,10 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(`Server running on port ${process.env.PORT}`);
-    });
-  })
-  .catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  ssl: true,
+  tls: true,
+  tlsCAFile: `${__dirname}/rds-combined-ca-bundle.pem` 
+})
